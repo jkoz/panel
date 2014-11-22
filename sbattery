@@ -1,0 +1,49 @@
+#!/usr/bin/bash
+
+#set -x
+
+default="#90707070"
+
+glyph_battery_charging=""
+glyph_battery_100="\ue021"
+glyph_battery_90_100="\ue022"
+glyph_battery_80_90="\ue023"
+glyph_battery_80_60="\ue024"
+glyph_battery_60_40="\ue025"
+glyph_battery_40_20="\ue026"
+glyph_battery_20_0="\ue027"
+
+bat_color="#99000000"
+bat_info=$(acpi -b)
+
+state=$(echo $bat_info | awk 'sub(/%/, "") sub(/,/,"") {print $3}')
+capacity=$(sed -n p "/sys/class/power_supply/BAT1/capacity")
+
+if test "$state" = "Charging"; then
+    glyph_battery_charging="\ue028"
+fi
+
+if test "$state" = "Full"; then
+    bat_text="${glyph_battery_100}"
+else
+    if test $capacity -eq 100; then
+        bat_text="${glyph_battery_100}${glyph_battery_charging}"
+    elif test $capacity -le 100 -a $capacity -gt 90; then
+        bat_text="${glyph_battery_90_100}${glyph_battery_charging}"
+    elif test $capacity -le 90 -a $capacity -gt 80; then
+        bat_text="${glyph_battery_80_90}${glyph_battery_charging}"
+    elif test $capacity -le 80 -a $capacity -gt 60; then
+        bat_text="${glyph_battery_80_60}${glyph_battery_charging}"
+    elif test $capacity -le 60 -a $capacity -gt 40; then
+        bat_text="${glyph_battery_60_40}${glyph_battery_charging}"
+    elif test $capacity -le 40 -a $capacity -gt 20; then
+        bat_text="${glyph_battery_40_20}${glyph_battery_charging}"
+    elif test $capacity -le 20; then
+        bat_text="%{Fred}${glyph_battery_20_0}${glyph_battery_charging}"
+    else
+        bat_text="Unknown"
+    fi
+fi
+
+#test -z ${capacity} && echo "" || echo "%{F${bat_color}}${bat_text} %{F${default}}${capacity}%%"
+test -z ${capacity} && echo "" || echo "${bat_text}"
