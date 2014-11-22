@@ -15,11 +15,11 @@ $(BIN):
 all: $(BIN)
 
 install:
-	mkdir -p $(BINPREFIX)
-	cp -p {$(BINLST)} $(BINPREFIX)
-	chmod 755 $(BINPREFIX)/{$(BINLST)}
+	@mkdir -p $(BINPREFIX)
+	@cp -p {$(BINLST)} $(BINPREFIX)
+	@chmod 755 $(BINPREFIX)/{$(BINLST)}
 
 uninstall:
-	rm $(BINPREFIX)/{$(BINLST)}
+	@rm $(BINPREFIX)/{$(BINLST)}
 
 .PHONY: all install uninstall
